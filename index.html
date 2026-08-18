@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Е-баллы — антирейтинг команды</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="shell" id="shell">
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <div class="header-left">
+      <div class="eyebrow">Антирейтинг команды · штрафные баллы</div>
+      <div class="page-title">Анти-подиум</div>
+      <div class="page-desc">Пьедестал позора для топ-3 нарушителей плюс список остальных.</div>
+    </div>
+    <div class="header-right">
+      <button class="theme-btn" id="themeToggle" title="Светлая тема" aria-label="Переключить тему">☀</button>
+      <div class="nav-tabs" role="tablist" aria-label="Экраны">
+        <button class="nav-tab active" data-screen="rating" role="tab" aria-selected="true">
+          <span class="nav-tab-tag">01</span><span class="nav-tab-label">Рейтинг</span>
+        </button>
+        <button class="nav-tab" data-screen="employees" role="tab" aria-selected="false">
+          <span class="nav-tab-tag">02</span><span class="nav-tab-label">Сотрудники</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= ЭКРАН 01: РЕЙТИНГ ================= -->
+  <section id="screen-rating" class="screen active">
+
+    <div class="toolbar">
+      <div class="period-tabs" id="periodTabs" role="tablist" aria-label="Период"></div>
+      <div class="period-nav">
+        <button class="btn-icon" id="periodPrev" aria-label="Предыдущий период">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <span class="period-label" id="periodLabel"></span>
+        <button class="btn-icon" id="periodNext" aria-label="Следующий период">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="btn-ghost-sm" id="periodToday">Сегодня</button>
+      </div>
+      <button class="btn-lime" id="btnOpenAward">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Начислить баллы
+      </button>
+    </div>
+
+    <!-- ПОДИУМ И СПИСОК -->
+    <div class="podium-card">
+      <div class="podium-header-title">Пьедестал позора · топ-3</div>
+      <div class="podium-grid" id="podiumGrid"></div>
+      <div class="rest-list" id="restList"></div>
+      <div class="empty-inline" id="ratingEmpty" hidden>Нет сотрудников. Добавьте команду на вкладке «Сотрудники».</div>
+    </div>
+
+    <!-- ЛЕНТА НАЧИСЛЕНИЙ -->
+    <div class="recent-feed">
+      <div class="feed-eyebrow">Последние начисления</div>
+      <div class="feed-list" id="feedList"></div>
+      <div class="empty-inline" id="feedEmpty" hidden>Начислений пока нет.</div>
+    </div>
+  </section>
+
+  <!-- ================= ЭКРАН 02: СОТРУДНИКИ ================= -->
+  <section id="screen-employees" class="screen">
+    <div class="toolbar">
+      <div>
+        <div class="eyebrow">Управление командой</div>
+        <div class="page-title" style="font-size:22px;">Сотрудники</div>
+      </div>
+      <button class="btn-lime" id="btnAddEmployee">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Добавить сотрудника
+      </button>
+    </div>
+    <div class="employees-card">
+      <div class="employees-list" id="employeesList"></div>
+      <div class="empty-inline" id="employeesEmpty" hidden>Список пуст. Добавьте первого сотрудника.</div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ МОДАЛКА: НАЧИСЛИТЬ БАЛЛЫ ============ -->
+<div class="overlay" id="overlayAward" hidden>
+  <div class="fmodal" data-stop="1">
+    <div class="fmodal-header">
+      <div class="fmodal-title">Начислить баллы</div>
+      <button class="fmodal-close" id="closeAward" aria-label="Закрыть">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form class="fmodal-body" id="formAward">
+      <!-- Кому -->
+      <div class="ffield">
+        <div class="ffield-label">
+          <span>Кому начислить</span>
+          <span class="facc-text" id="selectedCountLabel">выбрано: 0</span>
+        </div>
+        <div class="chip-row" id="memberChips"></div>
+      </div>
+
+      <!-- Тип события -->
+      <div class="ffield">
+        <div class="ffield-label"><span>Тип события</span></div>
+        <div class="type-row" id="typeOptions"></div>
+      </div>
+
+      <!-- Количество -->
+      <div class="ffield">
+        <div class="ffield-label">
+          <span>Баллов</span>
+          <span class="famount" id="amountDisplay">+1</span>
+        </div>
+        <div class="quick-row" id="quickBtns" style="margin-bottom: 9px;"></div>
+        <input type="number" id="amountInput" class="finput fmono" min="1" step="1" value="1">
+      </div>
+
+      <!-- Причина -->
+      <div class="ffield">
+        <div class="ffield-label"><span>Причина · можно выбрать несколько</span></div>
+        <div class="chip-row" id="presetChips" style="margin-bottom: 10px;"></div>
+        <input type="text" id="reasonInput" class="finput" placeholder="Комментарий…" maxlength="120">
+      </div>
+
+      <!-- Фото-доказательство -->
+      <div class="ffield">
+        <div class="ffield-label"><span>Фото-доказательство</span></div>
+        <label class="upload-label">
+          <div id="photoPreviewBox">
+            <span style="width:38px; height:38px; border-radius:8px; background:var(--finp); display:flex; align-items:center; justify-content:center; color:var(--fmut);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg>
+            </span>
+          </div>
+          <span style="font-size: 13px; color: var(--fmut);" id="photoLabelText">Прикрепить фото</span>
+          <input type="file" id="photoInput" accept="image/*" style="display: none;">
+        </label>
+      </div>
+
+      <!-- Дата -->
+      <div class="ffield">
+        <div class="ffield-label"><span>Дата</span></div>
+        <input type="date" id="dateInput" class="finput">
+      </div>
+
+      <div class="fmodal-actions">
+        <button type="button" class="fbtn-cancel" id="cancelAward">Отмена</button>
+        <button type="submit" class="fbtn-submit" id="submitAward">Начислить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ МОДАЛКА: СОТРУДНИК ============ -->
+<div class="overlay" id="overlayEmployee" hidden>
+  <div class="fmodal fmodal-sm" data-stop="1">
+    <div class="fmodal-header">
+      <div class="fmodal-title" id="employeeModalTitle">Новый сотрудник</div>
+      <button class="fmodal-close" id="closeEmployee" aria-label="Закрыть">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form class="fmodal-body" id="formEmployee">
+      <input type="hidden" id="employeeId">
+      <div class="ffield">
+        <div class="ffield-label"><span>ФИО</span></div>
+        <input type="text" id="employeeName" class="finput" required maxlength="80" autocomplete="off">
+      </div>
+      <div class="ffield">
+        <div class="ffield-label"><span>Должность</span></div>
+        <input type="text" id="employeeRole" class="finput" maxlength="80" autocomplete="off">
+      </div>
+      <div class="fmodal-actions">
+        <button type="button" class="fbtn-cancel" id="cancelEmployee">Отмена</button>
+        <button type="submit" class="fbtn-submit">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ МОДАЛКА: ПОДТВЕРЖДЕНИЕ УДАЛЕНИЯ ============ -->
+<div class="overlay" id="overlayConfirm" hidden>
+  <div class="fmodal fmodal-sm" data-stop="1">
+    <div class="fmodal-header">
+      <div class="fmodal-title">Удалить сотрудника?</div>
+      <button class="fmodal-close" id="closeConfirm" aria-label="Закрыть">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="fmodal-body">
+      <p style="font-size:14px; color:var(--fmut);" id="confirmText"></p>
+      <div class="fmodal-actions">
+        <button type="button" class="fbtn-cancel" id="cancelConfirm">Отмена</button>
+        <button type="button" class="fbtn-danger" id="confirmDeleteBtn">Удалить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" hidden>
+  <span id="toastText"></span>
+  <button class="toast-undo" id="toastUndo" hidden>Отменить</button>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#0d0d10">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0d0d10"/>
+    <rect x="360" y="150" width="480" height="90" rx="16" fill="#d7ff2e"/>
+    <circle cx="440" cy="195" r="26" fill="#0d0d10"/>
+    <rect x="300" y="300" width="600" height="60" rx="12" fill="#16161c"/>
+    <rect x="300" y="380" width="600" height="60" rx="12" fill="#16161c"/>
+    <rect x="300" y="460" width="600" height="60" rx="12" fill="#16161c"/>
+    <rect x="300" y="300" width="300" height="60" rx="12" fill="#1f1f28"/>
+    <circle cx="900" cy="330" r="46" fill="none" stroke="#d7ff2e" stroke-width="10"/>
+    <text x="900" y="348" font-family="monospace" font-size="44" font-weight="700" fill="#d7ff2e" text-anchor="middle">1</text>
+  </svg>
+</template>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&family=Manrope:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Archivo:wght@600;700;800;900&family=Space+Mono:wght@700&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  ::selection { background: #d7ff2e; color: #000; }
+  input[type="range"] { -webkit-appearance: none; appearance: none; background: transparent; }
+  input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 99px; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; margin-top: -7px; border-radius: 50%; background: #fff; border: 2px solid currentColor; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+  @keyframes riseUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div style="{{ shellStyle }}">
+
+  <!-- SHELL HEADER -->
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; max-width: 1180px; margin: 0 auto 20px;">
+    <div>
+      <div style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--s-mut); font-weight: 600;">Антирейтинг команды · штрафные баллы</div>
+      <div style="font-size: 26px; font-weight: 700; margin-top: 6px;">{{ variantTitle }}</div>
+      <div style="font-size: 13.5px; color: var(--s-sub); margin-top: 4px; max-width: 520px;">{{ variantDesc }}</div>
+    </div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <button onClick="{{ toggleTheme }}" title="{{ themeTitle }}" style="{{ themeBtnStyle }}">{{ themeIcon }}</button>
+      <sc-for list="{{ vbtns }}" as="vb" hint-placeholder-count="4">
+        <button onClick="{{ vb.onClick }}" style="{{ vb.style }}">
+          <span style="font-size: 10px; letter-spacing: .1em; opacity: .7; display: block;">{{ vb.tag }}</span>
+          <span style="font-weight: 700;">{{ vb.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- SHELL TOOLBAR -->
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; max-width: 1180px; margin: 0 auto 18px;">
+    <div style="display: inline-flex; gap: 4px; background: var(--s-btnbg); border: 1px solid var(--s-bd); border-radius: 10px; padding: 4px;">
+      <sc-for list="{{ periodTabs }}" as="pt" hint-placeholder-count="3">
+        <button onClick="{{ pt.onClick }}" style="{{ pt.style }}">{{ pt.label }}</button>
+      </sc-for>
+    </div>
+    <button onClick="{{ openBlankForm }}" style="display: inline-flex; align-items: center; gap: 8px; background: #d7ff2e; color: #111; border: none; border-radius: 10px; padding: 11px 18px; font-weight: 700; font-size: 14px; cursor: pointer; font-family: inherit;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Начислить баллы
+    </button>
+  </div>
+
+  <!-- ============ V1 · ВЕДОМОСТЬ (строгий, светлый) ============ -->
+  <sc-if value="{{ isV1 }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width: 1180px; margin: 0 auto; background: #f6f5f2; color: #17171a; border-radius: 14px; border: 1px solid #e4e2dc; overflow: hidden; animation: fadeIn .25s ease; font-family: 'IBM Plex Sans', sans-serif;">
+      <div style="display: grid; grid-template-columns: 56px 1fr 120px 130px 44px; gap: 0; padding: 14px 22px; border-bottom: 1px solid #e4e2dc; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #8a8a80; font-weight: 600;">
+        <div>#</div><div>Сотрудник</div><div style="text-align: right;">Опозданий</div><div style="text-align: right;">Штрафных</div><div></div>
+      </div>
+      <sc-for list="{{ rows }}" as="row" hint-placeholder-count="6">
+        <div style="display: grid; grid-template-columns: 56px 1fr 120px 130px 44px; align-items: center; gap: 0; padding: 13px 22px; border-bottom: 1px solid #ecebe5;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 15px; color: {{ row.rankColorLight }};">{{ row.rankStr }}</span>
+            <sc-if value="{{ row.isFirst }}" hint-placeholder-val="{{ false }}"><img src="assets/medal-antihero.png" alt="Медаль антигероя" title="Антигерой месяца" style="width: 28px; height: 28px; object-fit: contain;"></sc-if>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+            <div style="width: 34px; height: 34px; border-radius: 9px; flex: none; background: #e9e7e0; border: 1px dashed #c9c6bc; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #8a8778;" title="Фото сотрудника">{{ row.initials }}</div>
+            <div style="min-width: 0;">
+              <div style="font-weight: 600; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ row.name }}</div>
+              <div style="font-size: 12px; color: #9a988c;">{{ row.role }}</div>
+            </div>
+          </div>
+          <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #6b6b62;">{{ row.late }}</div>
+          <div style="text-align: right;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 16px; color: {{ row.pointsColorLight }};">{{ row.pointsStr }}</div>
+            <div style="height: 4px; border-radius: 99px; background: #e4e2dc; margin-top: 5px; overflow: hidden;"><div style="height: 100%; background: {{ row.pointsColorLight }}; width: {{ row.barPct }};"></div></div>
+          </div>
+          <button onClick="{{ row.onQuickLate }}" title="Отметить опоздание (+1)" style="justify-self: end; width: 30px; height: 30px; border-radius: 8px; border: 1px solid #d8d5cc; background: #fff; color: #b0331f; cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+          </button>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <!-- ============ V2 · КАРТОЧКИ (тёплый) ============ -->
+  <sc-if value="{{ isV2 }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width: 1180px; margin: 0 auto; background: #fff7ed; border-radius: 18px; border: 1px solid #f2d9be; padding: 22px; animation: fadeIn .25s ease; font-family: 'Manrope', sans-serif;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px;">
+        <sc-for list="{{ rows }}" as="row" hint-placeholder-count="6">
+          <div style="position: relative; background: #fff; border: 1px solid #f2d9be; border-radius: 16px; padding: 18px; box-shadow: 0 6px 18px rgba(234,88,12,.06); animation: riseUp .3s ease both;">
+            <div style="position: absolute; top: 14px; right: 14px; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 12px; color: #fff; background: {{ row.rankColorWarm }}; border-radius: 8px; padding: 3px 9px;">{{ row.rankStr }}</div>
+            <sc-if value="{{ row.isFirst }}" hint-placeholder-val="{{ false }}"><img src="assets/medal-antihero.png" alt="Медаль антигероя" title="Антигерой месяца" style="position: absolute; top: -16px; left: -12px; width: 52px; height: 52px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,.22));"></sc-if>
+            <div style="display: flex; align-items: center; gap: 13px;">
+              <div style="width: 52px; height: 52px; border-radius: 14px; flex: none; background: #fdead4; border: 1px dashed #f0b581; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #c2610f;" title="Фото сотрудника">{{ row.initials }}</div>
+              <div style="min-width: 0;">
+                <div style="font-weight: 800; font-size: 16px; color: #3a2a18; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ row.name }}</div>
+                <div style="font-size: 12.5px; color: #a07b52;">{{ row.role }}</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: flex-end; gap: 14px; margin: 16px 0 10px;">
+              <div><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 30px; line-height: 1; color: {{ row.pointsColorWarm }};">{{ row.pointsStr }}</div><div style="font-size: 11px; color: #a07b52; margin-top: 3px;">штрафных</div></div>
+              <div style="margin-left: auto; text-align: right;"><div style="font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 18px; color: #6b5030;">{{ row.late }}</div><div style="font-size: 11px; color: #a07b52;">опозданий</div></div>
+            </div>
+            <div style="height: 7px; border-radius: 99px; background: #f7e3cd; overflow: hidden; margin-bottom: 14px;"><div style="height: 100%; background: {{ row.pointsColorWarm }}; width: {{ row.barPct }}; border-radius: 99px;"></div></div>
+            <div style="display: flex; gap: 8px;">
+              <button onClick="{{ row.onOpenForm }}" style="flex: 1; background: #ea580c; color: #fff; border: none; border-radius: 10px; padding: 10px; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit;">Начислить</button>
+              <button onClick="{{ row.onQuickLate }}" title="Опоздание +1" style="width: 42px; border: 1px solid #f2d9be; background: #fff7ed; color: #ea580c; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+              </button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ V3 · АНТИ-ПОДИУМ (тёмный драматичный) ============ -->
+  <sc-if value="{{ isV3 }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width: 1180px; margin: 0 auto; background: radial-gradient(120% 90% at 50% -10%, #221a2e 0%, #101019 55%); border-radius: 18px; border: 1px solid #2a2438; padding: 26px 22px 24px; animation: fadeIn .25s ease; font-family: 'Space Grotesk', sans-serif;">
+      <div style="text-align: center; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: #8a8aa0; margin-bottom: 22px;">Пьедестал позора · топ-3</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; align-items: end; max-width: 720px; margin: 0 auto 26px;">
+        <sc-for list="{{ podium }}" as="row" hint-placeholder-count="3">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+            <div style="position: relative;">
+              <sc-if value="{{ row.isFirst }}" hint-placeholder-val="{{ false }}"><img src="assets/medal-antihero.png" alt="Медаль антигероя" title="Антигерой месяца" style="position: absolute; top: -40px; left: 50%; transform: translateX(-50%); width: 56px; height: 56px; object-fit: contain; z-index: 2; filter: drop-shadow(0 4px 10px rgba(0,0,0,.4));"></sc-if>
+              <div style="width: {{ row.podiumAvatar }}; height: {{ row.podiumAvatar }}; border-radius: 50%; background: #1c1c2b; border: 2px dashed {{ row.podiumColor }}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: {{ row.podiumColor }};" title="Фото сотрудника">{{ row.initials }}</div>
+              <div style="position: absolute; -bottom: 6px; bottom: -6px; right: -6px; width: 26px; height: 26px; border-radius: 50%; background: {{ row.podiumColor }}; color: #101019; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace;">{{ row.rankStr }}</div>
+            </div>
+            <div style="text-align: center;"><div style="font-weight: 700; font-size: 14.5px; color: #ececf5;">{{ row.name }}</div><div style="font-size: 11.5px; color: #8a8aa0;">{{ row.role }}</div></div>
+            <div style="width: 100%; height: {{ row.podiumHeight }}; background: linear-gradient(180deg, {{ row.podiumColor }} 0%, rgba(255,255,255,0) 260%); border-radius: 12px 12px 0 0; border: 1px solid {{ row.podiumColor }}; border-bottom: none; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 14px;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 26px; color: #fff;">{{ row.pointsStr }}</div>
+              <div style="font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.75);">штрафных</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px; max-width: 820px; margin: 0 auto;">
+        <sc-for list="{{ rest }}" as="row" hint-placeholder-count="5">
+          <div style="display: grid; grid-template-columns: 40px 1fr 90px 90px 40px; align-items: center; gap: 12px; background: #16161f; border: 1px solid #26263a; border-radius: 12px; padding: 11px 16px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: #6a6a86;">{{ row.rankStr }}</div>
+            <div style="display: flex; align-items: center; gap: 11px; min-width: 0;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; flex: none; background: #1c1c2b; border: 1px dashed #3a3a52; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #9a9ab5;" title="Фото сотрудника">{{ row.initials }}</div>
+              <div style="min-width: 0;"><div style="font-weight: 600; font-size: 14px; color: #ececf5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ row.name }}</div><div style="font-size: 11.5px; color: #8a8aa0;">{{ row.role }}</div></div>
+            </div>
+            <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #8a8aa0;">{{ row.late }} оп.</div>
+            <div style="text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 16px; color: {{ row.pointsColorDark }};">{{ row.pointsStr }}</div>
+            <button onClick="{{ row.onQuickLate }}" title="Опоздание +1" style="justify-self: end; width: 30px; height: 30px; border-radius: 8px; border: 1px solid #33334a; background: transparent; color: #b6b6cc; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+            </button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ V4 · СТЕНА ПОЗОРА (смелый / брутализм) ============ -->
+  <sc-if value="{{ isV4 }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width: 1180px; margin: 0 auto; background: #0b0b0b; border: 2px solid #d7ff2e; border-radius: 4px; padding: 4px; animation: fadeIn .25s ease; font-family: 'Archivo', sans-serif;">
+      <div style="background: #d7ff2e; color: #000; padding: 12px 18px; display: flex; justify-content: space-between; align-items: baseline; font-weight: 900; letter-spacing: -.01em;">
+        <span style="font-size: 20px; text-transform: uppercase;">Стена позора</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 12px;">{{ periodLabel }}</span>
+      </div>
+      <sc-for list="{{ rows }}" as="row" hint-placeholder-count="6">
+        <div style="display: grid; grid-template-columns: 92px 1fr auto; align-items: center; gap: 16px; padding: 14px 18px; border-bottom: 1px solid #1c1c1c; background: {{ row.wallBg }};">
+          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+            <div style="font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 56px; line-height: .8; color: {{ row.wallRankColor }}; letter-spacing: -.04em;">{{ row.rankStr }}</div>
+            <sc-if value="{{ row.isFirst }}" hint-placeholder-val="{{ false }}"><img src="assets/medal-antihero.png" alt="Медаль антигероя" title="Антигерой месяца" style="width: 46px; height: 46px; object-fit: contain;"></sc-if>
+          </div>
+          <div style="min-width: 0;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 38px; height: 38px; flex: none; background: #161616; border: 1px dashed #444; display: flex; align-items: center; justify-content: center; font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; color: #d7ff2e;" title="Фото сотрудника">{{ row.initials }}</div>
+              <div style="min-width: 0;"><div style="font-weight: 800; font-size: 22px; color: #f2f2f2; text-transform: uppercase; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ row.name }}</div><div style="font-family: 'Space Mono', monospace; font-size: 11px; color: #777;">{{ row.role }} · {{ row.late }} опозданий</div></div>
+            </div>
+            <div style="height: 10px; background: #161616; margin-top: 10px; overflow: hidden;"><div style="height: 100%; background: {{ row.wallBarColor }}; width: {{ row.barPct }};"></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="text-align: right;"><div style="font-family: 'Space Mono', monospace; font-weight: 700; font-size: 34px; line-height: 1; color: {{ row.wallBarColor }};">{{ row.pointsStr }}</div><div style="font-family: 'Space Mono', monospace; font-size: 10px; color: #777; text-align: right;">ШТРАФ</div></div>
+            <button onClick="{{ row.onQuickLate }}" title="Опоздание +1" style="width: 40px; height: 40px; border: 2px solid #d7ff2e; background: transparent; color: #d7ff2e; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 900;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <!-- RECENT FEED -->
+  <div style="max-width: 1180px; margin: 26px auto 0;">
+    <div style="font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--s-mut); font-weight: 600; margin-bottom: 12px;">Последние начисления</div>
+    <div style="display: flex; flex-direction: column; gap: 7px;">
+      <sc-for list="{{ recent }}" as="ev" hint-placeholder-count="4">
+        <div style="display: flex; align-items: center; gap: 13px; background: var(--s-panel); border: 1px solid var(--s-bd); border-radius: 11px; padding: 10px 15px;">
+          {{ ev.photoImg }}
+          <div style="width: 30px; height: 30px; border-radius: 8px; flex: none; background: {{ ev.tint }}; display: flex; align-items: center; justify-content: center; color: {{ ev.iconColor }};">
+            <span style="font-size: 15px; line-height: 1;">{{ ev.icon }}</span>
+          </div>
+          <div style="min-width: 0; flex: 1;">
+            <div style="font-size: 13.5px; color: var(--s-fg);"><span style="font-weight: 600;">{{ ev.memberName }}</span> — {{ ev.reason }}</div>
+            <div style="font-size: 11.5px; color: var(--s-sub);">{{ ev.typeLabel }} · {{ ev.dateStr }}</div>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 15px; color: {{ ev.pointsColor }};">{{ ev.pointsStr }}</div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ noRecent }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align: center; color: var(--s-empty); font-size: 13.5px; padding: 20px;">Начислений пока нет.</div>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- ============ AWARD FORM MODAL ============ -->
+  <sc-if value="{{ formOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onOverlayClick }}" style="{{ overlayStyle }}">
+      <div style="width: 100%; max-width: 500px; background: var(--fbg); color: var(--ffg); border: 1px solid var(--fbd); border-radius: 18px; overflow: hidden; animation: pop .24s ease; box-shadow: 0 30px 80px rgba(0,0,0,.5);" data-stop="1">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--fbd);">
+          <div style="font-weight: 700; font-size: 18px;">Начислить баллы</div>
+          <button onClick="{{ closeForm }}" style="width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--fbd); background: transparent; color: var(--fmut); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div style="padding: 20px 22px; display: flex; flex-direction: column; gap: 18px;">
+
+          <!-- Кому -->
+          <div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--fmut); margin-bottom: 9px; display: flex; justify-content: space-between;"><span>{{ memberFieldLabel }}</span><span style="color: var(--facc);">{{ selectedCountLabel }}</span></div>
+            <div style="display: flex; flex-wrap: wrap; gap: 7px;">
+              <sc-for list="{{ memberChips }}" as="mc" hint-placeholder-count="8">
+                <button onClick="{{ mc.onClick }}" style="{{ mc.style }}">{{ mc.name }}</button>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- Тип события (tweak) -->
+          <sc-if value="{{ fType }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: var(--fmut); margin-bottom: 9px;">Тип события</div>
+              <div style="display: flex; gap: 7px;">
+                <sc-for list="{{ typeOptions }}" as="t" hint-placeholder-count="3">
+                  <button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- Количество -->
+          <div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--fmut); margin-bottom: 9px; display: flex; justify-content: space-between;"><span>Баллов</span><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 16px; color: var(--facc);">{{ amountDisplay }}</span></div>
+            <sc-if value="{{ fQuick }}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; gap: 7px; margin-bottom: 11px;">
+                <sc-for list="{{ quickBtns }}" as="q" hint-placeholder-count="3">
+                  <button onClick="{{ q.onClick }}" style="{{ q.style }}">{{ q.label }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ fSlider }}" hint-placeholder-val="{{ false }}">
+              <input type="range" min="1" max="20" step="1" value="{{ form.amount }}" onInput="{{ onAmountRange }}" style="width: 100%; color: var(--facc); margin: 4px 0 2px;">
+            </sc-if>
+            <sc-if value="{{ showNumberInput }}" hint-placeholder-val="{{ true }}">
+              <input type="number" min="1" step="1" value="{{ form.amount }}" onInput="{{ onAmountInput }}" style="width: 100%; background: var(--finp); border: 1px solid var(--fbd); border-radius: 10px; padding: 11px 13px; color: var(--ffg); font-family: 'IBM Plex Mono', monospace; font-size: 15px;">
+            </sc-if>
+          </div>
+
+          <!-- Причина -->
+          <div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--fmut); margin-bottom: 9px;">Причина · можно выбрать несколько</div>
+            <sc-if value="{{ fPresets }}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px;">
+                <sc-for list="{{ presetChips }}" as="p" hint-placeholder-count="5">
+                  <button onClick="{{ p.onClick }}" style="{{ p.style }}">{{ p.mark }}{{ p.label }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <input type="text" value="{{ form.reason }}" onInput="{{ onReasonInput }}" placeholder="Комментарий…" maxlength="120" style="width: 100%; background: var(--finp); border: 1px solid var(--fbd); border-radius: 10px; padding: 11px 13px; color: var(--ffg); font-size: 14px; font-family: inherit;">
+          </div>
+
+          <!-- Фото-доказательство (tweak) -->
+          <sc-if value="{{ fPhoto }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="font-size: 12px; font-weight: 600; color: var(--fmut); margin-bottom: 9px;">Фото-доказательство</div>
+              <label style="display: flex; align-items: center; gap: 13px; border: 1px dashed var(--fbd); border-radius: 12px; padding: 13px; cursor: pointer;">
+                {{ formPhotoImg }}
+                <sc-if value="{{ noPhoto }}" hint-placeholder-val="{{ true }}">
+                  <span style="width: 46px; height: 46px; border-radius: 9px; flex: none; background: var(--finp); display: flex; align-items: center; justify-content: center; color: var(--fmut);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
+                </sc-if>
+                <span style="font-size: 13px; color: var(--fmut);">{{ photoLabel }}</span>
+                <input type="file" accept="image/*" onChange="{{ onPhotoChange }}" style="display: none;">
+              </label>
+            </div>
+          </sc-if>
+
+          <!-- Дата -->
+          <div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--fmut); margin-bottom: 9px;">Дата</div>
+            <input type="date" value="{{ form.date }}" onInput="{{ onDateInput }}" style="width: 100%; background: var(--finp); border: 1px solid var(--fbd); border-radius: 10px; padding: 11px 13px; color: var(--ffg); font-size: 14px; font-family: inherit;">
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 2px;">
+            <button onClick="{{ closeForm }}" style="flex: none; background: transparent; border: 1px solid var(--fbd); color: var(--fmut); border-radius: 11px; padding: 13px 20px; font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit;">Отмена</button>
+            <button onClick="{{ submitForm }}" style="flex: 1; background: var(--facc); color: var(--faccfg); border: none; border-radius: 11px; padding: 13px; font-weight: 700; font-size: 14px; cursor: pointer; font-family: inherit;">{{ submitLabel }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- TOAST -->
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--s-toastbg); border: 1px solid var(--s-toastbd); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 14px; z-index: 200; box-shadow: 0 12px 40px rgba(0,0,0,.35); animation: pop .2s ease;">
+      <span style="font-size: 14px; color: var(--s-toastfg);">{{ toast }}</span>
+      <sc-if value="{{ canUndo }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ undo }}" style="background: transparent; border: none; color: #d7ff2e; font-weight: 700; cursor: pointer; font-size: 14px; font-family: inherit;">Отменить</button>
+      </sc-if>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:900},&quot;fPresets&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Функции формы начисления&quot;},&quot;fQuick&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Функции формы начисления&quot;},&quot;fSlider&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Функции формы начисления&quot;},&quot;fBatch&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Функции формы начисления&quot;},&quot;fType&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Функции формы начисления&quot;},&quot;fPhoto&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Функции формы начисления&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.KEY = 'team_rating_variants_v2';
+    this.state = { variant: 'v1', period: 'all', theme: 'dark', formOpen: false, form: this.blankForm(), toast: null, lastEventIds: null, members: [], events: [] };
+  }
+
+  /* ---------- helpers ---------- */
+  uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  todayISO() { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
+  daysAgo(n) { const d = new Date(); d.setDate(d.getDate() - n); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
+  initials(name) { return name.split(' ').map(p => p[0]).slice(0, 2).join('').toUpperCase(); }
+  blankForm() { return { type: 'late', memberIds: [], amount: 1, reasons: [], reason: '', photo: null, date: this.todayISO() }; }
+  toggleTheme = () => this.setState(s => ({ theme: s.theme === 'dark' ? 'light' : 'dark' }));
+
+  componentDidMount() {
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(this.KEY)); } catch (e) {}
+    if (saved && Array.isArray(saved.members) && saved.members.length) {
+      this.setState({ members: saved.members, events: saved.events || [] });
+    } else {
+      const seed = this.seed();
+      this.setState({ members: seed.members, events: seed.events });
+    }
+  }
+
+  persist(members, events) {
+    try { localStorage.setItem(this.KEY, JSON.stringify({ members, events })); } catch (e) {}
+  }
+
+  seed() {
+    const defs = [
+      ['Артём Кузнецов', 'Backend'], ['Мария Соколова', 'Дизайнер'], ['Дмитрий Волков', 'QA'],
+      ['Елена Морозова', 'PM'], ['Иван Лебедев', 'Frontend'], ['Ольга Новикова', 'Аналитик'],
+      ['Павел Орлов', 'DevOps'], ['Анна Зайцева', 'Frontend']
+    ];
+    const members = defs.map((d, i) => ({ id: 'm' + (i + 1), name: d[0], role: d[1] }));
+    const R = ['Опоздание на дейли', 'Опоздание на встречу', 'Сорван дедлайн', 'Не пришёл без предупреждения', 'Помог команде', 'Закрыл инцидент'];
+    const raw = [
+      ['m1', 'late', 1, 1], ['m1', 'late', 1, 3], ['m1', 'penalty', 5, 2], ['m1', 'late', 1, 8],
+      ['m3', 'late', 1, 1], ['m3', 'late', 1, 2], ['m3', 'penalty', 3, 6], ['m3', 'late', 1, 12],
+      ['m5', 'late', 1, 4], ['m5', 'late', 1, 5], ['m5', 'penalty', 4, 9],
+      ['m7', 'late', 1, 2], ['m7', 'late', 1, 6], ['m7', 'reward', -2, 3],
+      ['m2', 'late', 1, 7], ['m2', 'reward', -3, 2],
+      ['m4', 'penalty', 3, 10], ['m4', 'late', 1, 14],
+      ['m6', 'late', 1, 11], ['m6', 'reward', -2, 5],
+      ['m8', 'late', 1, 20]
+    ];
+    const events = raw.map(r => ({
+      id: this.uid(), memberId: r[0], type: r[1], points: r[2], date: this.daysAgo(r[3]),
+      reason: r[1] === 'reward' ? R[4 + (r[3] % 2)] : (r[1] === 'penalty' ? R[2 + (r[3] % 2)] : R[r[3] % 2]),
+      photo: null
+    }));
+    this.persist(members, events);
+    return { members, events };
+  }
+
+  /* ---------- period ---------- */
+  inPeriod(dateStr) {
+    if (this.state.period === 'all') return true;
+    const days = this.state.period === 'week' ? 7 : 31;
+    const t = new Date(dateStr + 'T12:00:00').getTime();
+    return t >= Date.now() - days * 86400000;
+  }
+
+  /* ---------- ranking ---------- */
+  rankedRows() {
+    const totals = new Map();
+    this.state.members.forEach(m => totals.set(m.id, { points: 0, late: 0 }));
+    this.state.events.forEach(ev => {
+      if (!this.inPeriod(ev.date)) return;
+      const b = totals.get(ev.memberId); if (!b) return;
+      b.points += ev.points;
+      if (ev.type === 'late') b.late += 1;
+    });
+    let rows = this.state.members.map(m => {
+      const t = totals.get(m.id) || { points: 0, late: 0 };
+      return { id: m.id, name: m.name, role: m.role, initials: this.initials(m.name), points: t.points, late: t.late };
+    });
+    rows.sort((a, b) => b.points - a.points || b.late - a.late || a.name.localeCompare(b.name, 'ru'));
+    const max = Math.max(1, ...rows.map(r => r.points));
+    rows.forEach((r, i) => { r.rank = i + 1; r.max = max; });
+    return rows;
+  }
+
+  /* ---------- events ---------- */
+  addEvents(memberIds, type, amount, reason, date, photo) {
+    const sign = type === 'reward' ? -1 : 1;
+    const pts = sign * Math.max(1, Math.round(Math.abs(amount)));
+    const ids = [];
+    const newEvents = memberIds.map(mid => {
+      const ev = { id: this.uid(), memberId: mid, type, points: pts, date: date || this.todayISO(), reason: reason || (type === 'reward' ? 'Награда' : type === 'penalty' ? 'Штраф' : 'Опоздание'), photo: photo || null };
+      ids.push(ev.id); return ev;
+    });
+    const events = [...this.state.events, ...newEvents];
+    this.persist(this.state.members, events);
+    this.setState({ events, lastEventIds: ids });
+    return ids;
+  }
+
+  showToast(text, undoable) {
+    clearTimeout(this._tt);
+    this.setState({ toast: text, canUndo: !!undoable });
+    this._tt = setTimeout(() => this.setState({ toast: null, canUndo: false }), 5000);
+  }
+
+  quickLate(id) {
+    this.addEvents([id], 'late', 1, 'Опоздание', this.todayISO(), null);
+    this.showToast('Опоздание отмечено (+1)', true);
+  }
+
+  undo = () => {
+    if (!this.state.lastEventIds) return;
+    const ids = new Set(this.state.lastEventIds);
+    const events = this.state.events.filter(e => !ids.has(e.id));
+    this.persist(this.state.members, events);
+    clearTimeout(this._tt);
+    this.setState({ events, lastEventIds: null, toast: null, canUndo: false });
+  };
+
+  /* ---------- form ---------- */
+  openForm(id) {
+    const f = this.blankForm();
+    if (id) f.memberIds = [id];
+    else if (this.state.members[0]) f.memberIds = [this.state.members[0].id];
+    this.setState({ formOpen: true, form: f });
+  }
+  closeForm = () => this.setState({ formOpen: false });
+  patch(p) { this.setState(s => ({ form: { ...s.form, ...p } })); }
+
+  toggleReason(txt) {
+    const cur = this.state.form.reasons || [];
+    this.patch({ reasons: cur.includes(txt) ? cur.filter(x => x !== txt) : [...cur, txt] });
+  }
+
+  toggleMember(id) {
+    const batch = this.props.fBatch ?? true;
+    const cur = this.state.form.memberIds;
+    if (batch) {
+      this.patch({ memberIds: cur.includes(id) ? cur.filter(x => x !== id) : [...cur, id] });
+    } else {
+      this.patch({ memberIds: [id] });
+    }
+  }
+
+  onPhoto = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = () => this.patch({ photo: r.result });
+    r.readAsDataURL(file);
+  };
+
+  submit = () => {
+    const f = this.state.form;
+    if (!f.memberIds.length) { this.showToast('Выберите хотя бы одного сотрудника'); return; }
+    const combined = [...(f.reasons || []), f.reason.trim()].filter(Boolean).join(' · ');
+    const ids = this.addEvents(f.memberIds, f.type, f.amount, combined, f.date, f.photo);
+    const n = f.memberIds.length;
+    this.setState({ formOpen: false });
+    this.showToast(n > 1 ? ('Начислено ' + n + ' сотрудникам') : 'Баллы начислены', true);
+  };
+
+  /* ---------- theme per variant ---------- */
+  themes() {
+    return {
+      v1: { title: 'Ведомость', tag: 'V1', desc: 'Строгий табличный вид. Плотный, деловой, для регулярной сверки.', accent: '#c1121f', accFg: '#fff', modal: { bg: '#ffffff', fg: '#17171a', bd: '#e4e2dc', mut: '#8a8a80', inp: '#f6f5f2', acc: '#c1121f', accFg: '#fff' } },
+      v2: { title: 'Карточки', tag: 'V2', desc: 'Тёплые карточки сотрудников с прогресс-барами. Дружелюбный тон.', accent: '#ea580c', accFg: '#fff', modal: { bg: '#fffdfa', fg: '#3a2a18', bd: '#f2d9be', mut: '#a07b52', inp: '#fff7ed', acc: '#ea580c', accFg: '#fff' } },
+      v3: { title: 'Анти-подиум', tag: 'V3', desc: 'Пьедестал позора для топ-3 нарушителей плюс список остальных.', accent: '#e5b567', accFg: '#101019', modal: { bg: '#16161f', fg: '#ececf5', bd: '#2c2c40', mut: '#8a8aa0', inp: '#101019', acc: '#e5b567', accFg: '#101019' } },
+      v4: { title: 'Стена позора', tag: 'V4', desc: 'Смелый брутализм: гигантская типографика, кислотные акценты.', accent: '#d7ff2e', accFg: '#000', modal: { bg: '#0b0b0b', fg: '#f2f2f2', bd: '#2a2a2a', mut: '#888', inp: '#161616', acc: '#d7ff2e', accFg: '#000' } }
+    };
+  }
+
+  /* ---------- decorate a row for all variants ---------- */
+  decorate(r) {
+    const barPct = Math.max(4, Math.round((Math.max(0, r.points) / r.max) * 100)) + '%';
+    const pos = r.points > 0, neg = r.points < 0;
+    const podiumColors = { 1: '#e5b567', 2: '#c0c0cc', 3: '#cd7f4d' };
+    const podiumH = { 1: '150px', 2: '116px', 3: '92px' };
+    const podiumAv = { 1: '78px', 2: '66px', 3: '60px' };
+    return {
+      ...r,
+      barPct,
+      isFirst: r.rank === 1,
+      rankStr: String(r.rank),
+      pointsStr: (r.points > 0 ? '+' : '') + r.points,
+      rankColorLight: r.rank <= 3 ? '#c1121f' : '#b6b3a8',
+      pointsColorLight: pos ? '#c1121f' : (neg ? '#1f8a4c' : '#8a8a80'),
+      rankColorWarm: r.rank <= 3 ? '#ea580c' : '#c9a688',
+      pointsColorWarm: pos ? '#ea580c' : (neg ? '#16a34a' : '#a07b52'),
+      pointsColorDark: pos ? '#ff8a8a' : (neg ? '#7ee2a8' : '#8a8aa0'),
+      podiumColor: podiumColors[r.rank] || '#8a8aa0',
+      podiumHeight: podiumH[r.rank] || '80px',
+      podiumAvatar: podiumAv[r.rank] || '56px',
+      wallBg: r.rank === 1 ? '#111100' : '#0b0b0b',
+      wallRankColor: r.rank === 1 ? '#d7ff2e' : (r.rank <= 3 ? '#f2f2f2' : '#3a3a3a'),
+      wallBarColor: pos ? '#d7ff2e' : (neg ? '#ff2e88' : '#555'),
+      onQuickLate: () => this.quickLate(r.id),
+      onOpenForm: () => this.openForm(r.id)
+    };
+  }
+
+  renderVals() {
+    const p = this.props;
+    const fBatch = p.fBatch ?? true, fType = p.fType ?? true, fPresets = p.fPresets ?? true,
+      fQuick = p.fQuick ?? true, fSlider = p.fSlider ?? false, fPhoto = p.fPhoto ?? false;
+    const V = this.state.variant;
+    const th = this.themes()[V];
+    const rows = this.rankedRows().map(r => this.decorate(r));
+    const podium = rows.slice(0, 3);
+    const rest = rows.slice(3);
+
+    // variant buttons
+    const vdefs = [['v1', 'Ведомость', 'V1'], ['v2', 'Карточки', 'V2'], ['v3', 'Подиум', 'V3'], ['v4', 'Стена', 'V4']];
+    const vbtns = vdefs.map(d => {
+      const active = V === d[0];
+      return {
+        tag: d[2], label: d[1],
+        onClick: () => this.setState({ variant: d[0] }),
+        style: `text-align:left; min-width:96px; padding:8px 14px; border-radius:11px; cursor:pointer; font-family:inherit; border:1px solid ${active ? '#d7ff2e' : 'var(--s-btnbd)'}; background:${active ? '#d7ff2e' : 'var(--s-btnbg)'}; color:${active ? '#111' : 'var(--s-btnfg)'};`
+      };
+    });
+
+    // period tabs
+    const pdefs = [['week', 'Неделя'], ['month', 'Месяц'], ['all', 'Всё время']];
+    const periodTabs = pdefs.map(d => {
+      const active = this.state.period === d[0];
+      return { label: d[1], onClick: () => this.setState({ period: d[0] }), style: `border:none; border-radius:8px; padding:8px 15px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; background:${active ? '#d7ff2e' : 'transparent'}; color:${active ? '#111' : 'var(--s-tabidle)'};` };
+    });
+    const periodLabel = { week: 'Неделя', month: 'Месяц', all: 'Всё время' }[this.state.period];
+
+    // recent feed
+    const mmap = new Map(this.state.members.map(m => [m.id, m.name]));
+    const typeMeta = {
+      late: { label: 'Опоздание', icon: '⏱', tint: 'rgba(193,18,31,.16)', iconColor: '#ff8a8a' },
+      penalty: { label: 'Штраф', icon: '⚠', tint: 'rgba(245,158,11,.16)', iconColor: '#f5b23c' },
+      reward: { label: 'Награда', icon: '★', tint: 'rgba(34,197,94,.16)', iconColor: '#6ee7a0' }
+    };
+    const recent = [...this.state.events].reverse().slice(0, 6).map(ev => {
+      const tm = typeMeta[ev.type] || typeMeta.late;
+      return {
+        memberName: mmap.get(ev.memberId) || '—', reason: ev.reason, dateStr: this.fmtDate(ev.date),
+        typeLabel: tm.label, icon: tm.icon, tint: tm.tint, iconColor: tm.iconColor,
+        photoImg: ev.photo ? React.createElement('img', { src: ev.photo, alt: 'Доказательство', style: { width: '38px', height: '38px', borderRadius: '8px', objectFit: 'cover', flex: 'none' } }) : null,
+        pointsStr: (ev.points > 0 ? '+' : '') + ev.points,
+        pointsColor: ev.points > 0 ? '#ff8a8a' : '#6ee7a0'
+      };
+    });
+
+    // ---- form ----
+    const f = this.state.form;
+    const memberChips = this.state.members.map(m => {
+      const sel = f.memberIds.includes(m.id);
+      return {
+        name: m.name, onClick: () => this.toggleMember(m.id),
+        style: `padding:7px 12px; border-radius:99px; font-size:13px; cursor:pointer; font-family:inherit; font-weight:600; border:1px solid ${sel ? 'var(--facc)' : 'var(--fbd)'}; background:${sel ? 'var(--facc)' : 'transparent'}; color:${sel ? 'var(--faccfg)' : 'var(--fmut)'};`
+      };
+    });
+    const typeDefs = [['late', 'Опоздание'], ['penalty', 'Штраф'], ['reward', 'Награда (−)']];
+    const typeOptions = typeDefs.map(d => {
+      const active = f.type === d[0];
+      return { label: d[1], onClick: () => this.patch({ type: d[0] }), style: `flex:1; padding:10px; border-radius:10px; font-size:12.5px; font-weight:700; cursor:pointer; font-family:inherit; border:1px solid ${active ? 'var(--facc)' : 'var(--fbd)'}; background:${active ? 'var(--facc)' : 'transparent'}; color:${active ? 'var(--faccfg)' : 'var(--fmut)'};` };
+    });
+    const quickBtns = [1, 5, 10].map(n => {
+      const active = Number(f.amount) === n;
+      return { label: '+' + n, onClick: () => this.patch({ amount: n }), style: `flex:1; padding:10px; border-radius:10px; font-weight:700; font-family:'IBM Plex Mono',monospace; cursor:pointer; border:1px solid ${active ? 'var(--facc)' : 'var(--fbd)'}; background:${active ? 'var(--facc)' : 'transparent'}; color:${active ? 'var(--faccfg)' : 'var(--fmut)'};` };
+    });
+    const presets = ['Опоздание на дейли', 'Опоздание на встречу', 'Сорван дедлайн', 'Без предупреждения', 'Помог команде', 'Закрыл инцидент'];
+    const selReasons = f.reasons || [];
+    const presetChips = presets.map(txt => {
+      const active = selReasons.includes(txt);
+      return { label: txt, onClick: () => this.toggleReason(txt), style: `display:inline-flex; align-items:center; gap:5px; padding:6px 11px; border-radius:99px; font-size:12px; cursor:pointer; font-family:inherit; font-weight:${active ? '600' : '400'}; border:1px solid ${active ? 'var(--facc)' : 'var(--fbd)'}; background:${active ? 'var(--facc)' : 'transparent'}; color:${active ? 'var(--faccfg)' : 'var(--fmut)'};`, mark: active ? '✓ ' : '' };
+    });
+
+    const modalStyleVars = `--fbg:${th.modal.bg};--ffg:${th.modal.fg};--fbd:${th.modal.bd};--fmut:${th.modal.mut};--finp:${th.modal.inp};--facc:${th.modal.acc};--faccfg:${th.modal.accFg};`;
+    const overlayStyle = modalStyleVars + 'position:fixed; inset:0; background:rgba(6,6,10,.7); backdrop-filter:blur(3px); display:flex; align-items:flex-start; justify-content:center; padding:40px 16px; z-index:100; overflow-y:auto; animation:fadeIn .18s ease;';
+
+    // shell theme (light/dark chrome)
+    const dark = this.state.theme !== 'light';
+    const sh = dark
+      ? { bg: '#0d0d10', fg: '#e7e7ea', mut: '#6f6f7a', sub: '#9a9aa6', panel: '#16161c', bd: '#26262e', btnbg: '#17171c', btnbd: '#2a2a32', btnfg: '#c8c8d0', tabidle: '#8a8a94', empty: '#6a6a74', toastbg: '#1c1c24', toastbd: '#33333f', toastfg: '#e7e7ea' }
+      : { bg: '#edece7', fg: '#1a1a1e', mut: '#78766d', sub: '#57554d', panel: '#ffffff', bd: '#e3e1da', btnbg: '#ffffff', btnbd: '#dddbd3', btnfg: '#45443e', tabidle: '#78766d', empty: '#9a988c', toastbg: '#ffffff', toastbd: '#dddbd3', toastfg: '#1a1a1e' };
+    const shellVars = `--s-bg:${sh.bg};--s-fg:${sh.fg};--s-mut:${sh.mut};--s-sub:${sh.sub};--s-panel:${sh.panel};--s-bd:${sh.bd};--s-btnbg:${sh.btnbg};--s-btnbd:${sh.btnbd};--s-btnfg:${sh.btnfg};--s-tabidle:${sh.tabidle};--s-empty:${sh.empty};--s-toastbg:${sh.toastbg};--s-toastbd:${sh.toastbd};--s-toastfg:${sh.toastfg};`;
+    const shellStyle = shellVars + `min-height:100vh; color:var(--s-fg); background:var(--s-bg); font-family:'IBM Plex Sans',system-ui,sans-serif; padding:22px clamp(14px,4vw,40px) 80px; transition:background .25s ease, color .25s ease;`;
+    const themeBtnStyle = `display:flex; align-items:center; justify-content:center; width:38px; height:100%; min-height:44px; border-radius:11px; cursor:pointer; font-size:16px; font-family:inherit; border:1px solid var(--s-btnbd); background:var(--s-btnbg); color:var(--s-fg);`;
+
+    return {
+      // shell
+      variant: V, isV1: V === 'v1', isV2: V === 'v2', isV3: V === 'v3', isV4: V === 'v4',
+      variantTitle: th.title, variantDesc: th.desc,
+      vbtns, periodTabs, periodLabel,
+      shellStyle, themeBtnStyle, toggleTheme: this.toggleTheme,
+      themeIcon: dark ? '☀' : '☾', themeTitle: dark ? 'Светлая тема' : 'Тёмная тема',
+      openBlankForm: () => this.openForm(null),
+      // data
+      rows, podium, rest, recent, noRecent: recent.length === 0,
+      // form flags
+      fType, fPresets, fQuick, fSlider, fPhoto,
+      showNumberInput: !fSlider,
+      // form state
+      formOpen: this.state.formOpen, form: f,
+      memberChips, typeOptions, quickBtns, presetChips,
+      memberFieldLabel: fBatch ? 'Кому начислить' : 'Сотрудник',
+      selectedCountLabel: fBatch ? ('выбрано: ' + f.memberIds.length) : '',
+      amountDisplay: (f.type === 'reward' ? '−' : '+') + Math.max(1, Math.round(Math.abs(f.amount || 1))),
+      submitLabel: f.memberIds.length > 1 ? ('Начислить ' + f.memberIds.length) : 'Начислить',
+      noPhoto: !f.photo, photoLabel: f.photo ? 'Фото загружено — заменить' : 'Прикрепить фото',
+      formPhotoImg: f.photo ? React.createElement('img', { src: f.photo, alt: 'Превью', style: { width: '46px', height: '46px', borderRadius: '9px', objectFit: 'cover', flex: 'none' } }) : null,
+      onAmountRange: (e) => this.patch({ amount: Number(e.target.value) }),
+      onAmountInput: (e) => this.patch({ amount: Number(e.target.value) }),
+      onReasonInput: (e) => this.patch({ reason: e.target.value }),
+      onDateInput: (e) => this.patch({ date: e.target.value }),
+      onPhotoChange: this.onPhoto,
+      closeForm: this.closeForm, submitForm: this.submit,
+      onOverlayClick: (e) => { if (!e.target.closest('[data-stop]')) this.closeForm(); },
+      overlayStyle,
+      // toast
+      toast: this.state.toast, canUndo: this.state.canUndo, undo: this.undo
+    };
+  }
+
+  fmtDate(iso) {
+    const M = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+    const [y, m, d] = iso.split('-').map(Number);
+    return d + ' ' + M[m - 1];
+  }
+}
+</script>
+</body>
+</html>

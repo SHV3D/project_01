@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Е-баллы — рейтинг опозданий</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Fira+Code:wght@500;600&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10"/><path d="M17 4v8a5 5 0 0 1-10 0V4"/><path d="M5 4H3v2a4 4 0 0 0 4 4"/><path d="M19 4h2v2a4 4 0 0 1-4 4"/></svg>
+      <span>Е-баллы</span>
+    </div>
+    <nav class="tabs-main" role="tablist" aria-label="Разделы">
+      <button class="tab-main active" data-view="rating" role="tab" aria-selected="true">Рейтинг</button>
+      <button class="tab-main" data-view="employees" role="tab" aria-selected="false">Сотрудники</button>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-ghost" id="btnExport" title="Скачать резервную копию данных">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Экспорт
+      </button>
+      <button class="btn-ghost" id="btnImport" title="Загрузить данные из файла">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Импорт
+      </button>
+      <input type="file" id="importFile" accept="application/json" hidden>
+    </div>
+  </header>
+
+  <main>
+    <!-- ЭКРАН 1: РЕЙТИНГ -->
+    <section id="view-rating" class="view active">
+      <div class="period-bar">
+        <div class="period-tabs" role="tablist" aria-label="Период рейтинга">
+          <button class="period-tab active" data-period="week">Неделя</button>
+          <button class="period-tab" data-period="sprint">Спринт</button>
+          <button class="period-tab" data-period="month">Месяц</button>
+          <button class="period-tab" data-period="quarter">Квартал</button>
+          <button class="period-tab" data-period="year">Год</button>
+        </div>
+        <div class="period-nav">
+          <button class="btn-icon" id="periodPrev" aria-label="Предыдущий период">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span id="periodLabel" class="period-label"></span>
+          <button class="btn-icon" id="periodNext" aria-label="Следующий период">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="btn-ghost btn-sm" id="periodToday">Сегодня</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table" id="ratingTable">
+          <thead>
+            <tr>
+              <th class="col-rank">#</th>
+              <th class="col-name">Сотрудник</th>
+              <th class="col-num">Опозданий</th>
+              <th class="col-num">Баллы</th>
+            </tr>
+          </thead>
+          <tbody id="ratingBody"></tbody>
+        </table>
+        <div class="empty-state" id="ratingEmpty" hidden>
+          <p>Нет сотрудников. Добавьте команду на вкладке «Сотрудники».</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 2: СОТРУДНИКИ -->
+    <section id="view-employees" class="view">
+      <div class="toolbar">
+        <h1 class="view-title">Сотрудники</h1>
+        <button class="btn-primary" id="btnAddEmployee">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Добавить сотрудника
+        </button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table" id="employeesTable">
+          <thead>
+            <tr>
+              <th class="col-name">ФИО</th>
+              <th class="col-position">Должность</th>
+              <th class="col-num">Опозданий всего</th>
+              <th class="col-num">Баланс баллов</th>
+              <th class="col-actions">Действия</th>
+            </tr>
+          </thead>
+          <tbody id="employeesBody"></tbody>
+        </table>
+        <div class="empty-state" id="employeesEmpty" hidden>
+          <p>Список пуст. Добавьте первого сотрудника.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- МОДАЛКА: сотрудник (добавить/редактировать) -->
+<div class="modal-overlay" id="overlayEmployee" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalEmployeeTitle">
+    <div class="modal-header">
+      <h2 id="modalEmployeeTitle">Новый сотрудник</h2>
+      <button class="btn-icon" data-close-modal aria-label="Закрыть">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="formEmployee" class="modal-body">
+      <input type="hidden" id="employeeId">
+      <div class="field">
+        <label for="employeeName">ФИО <span class="req">*</span></label>
+        <input type="text" id="employeeName" required maxlength="80" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="employeePosition">Должность</label>
+        <input type="text" id="employeePosition" maxlength="80" autocomplete="off">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" data-close-modal>Отмена</button>
+        <button type="submit" class="btn-primary">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- МОДАЛКА: начислить / списать баллы -->
+<div class="modal-overlay" id="overlayPoints" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalPointsTitle">
+    <div class="modal-header">
+      <h2 id="modalPointsTitle">Изменить баллы</h2>
+      <button class="btn-icon" data-close-modal aria-label="Закрыть">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <form id="formPoints" class="modal-body">
+      <input type="hidden" id="pointsEmployeeId">
+      <p class="modal-sub" id="pointsEmployeeName"></p>
+      <div class="field">
+        <label>Операция</label>
+        <div class="segmented" role="radiogroup">
+          <button type="button" class="segmented-btn active" data-sign="1">+ Начислить</button>
+          <button type="button" class="segmented-btn" data-sign="-1">− Списать</button>
+        </div>
+        <input type="hidden" id="pointsSign" value="1">
+      </div>
+      <div class="field">
+        <label for="pointsAmount">Количество баллов <span class="req">*</span></label>
+        <input type="number" id="pointsAmount" min="1" step="1" required>
+      </div>
+      <div class="field">
+        <label for="pointsDate">Дата <span class="req">*</span></label>
+        <input type="date" id="pointsDate" required>
+      </div>
+      <div class="field">
+        <label for="pointsComment">Причина <span class="req">*</span></label>
+        <textarea id="pointsComment" rows="2" required maxlength="200" placeholder="Например: премия за помощь команде"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" data-close-modal>Отмена</button>
+        <button type="submit" class="btn-primary">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- МОДАЛКА: история событий сотрудника -->
+<div class="modal-overlay" id="overlayHistory" hidden>
+  <div class="modal modal-lg" role="dialog" aria-modal="true" aria-labelledby="modalHistoryTitle">
+    <div class="modal-header">
+      <h2 id="modalHistoryTitle">История</h2>
+      <button class="btn-icon" data-close-modal aria-label="Закрыть">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <ul class="history-list" id="historyList"></ul>
+      <p class="empty-state-inline" id="historyEmpty" hidden>Событий пока нет.</p>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА: подтверждение удаления -->
+<div class="modal-overlay" id="overlayConfirm" hidden>
+  <div class="modal modal-sm" role="alertdialog" aria-modal="true" aria-labelledby="modalConfirmTitle">
+    <div class="modal-header">
+      <h2 id="modalConfirmTitle">Удалить?</h2>
+      <button class="btn-icon" data-close-modal aria-label="Закрыть">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p id="confirmText"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn-ghost" data-close-modal>Отмена</button>
+        <button type="button" class="btn-danger" id="confirmActionBtn">Удалить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden>
+  <span id="toastText"></span>
+  <button id="toastUndo" class="toast-undo" hidden>Отменить</button>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
