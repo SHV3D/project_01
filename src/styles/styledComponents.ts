@@ -204,9 +204,9 @@ export const LimeButton = styled.button`
 
 /* PODIUM */
 export const PodiumCard = styled.div`
-  background: radial-gradient(120% 90% at 50% -10%, #221a2e 0%, #101019 55%);
+  background: ${({ theme }: { theme: AppTheme }) => theme.fbg};
   border-radius: 18px;
-  border: 1px solid #2a2438;
+  border: 1px solid ${({ theme }: { theme: AppTheme }) => theme.fbd};
   padding: 26px 22px 24px;
   font-family: 'Space Grotesk', sans-serif;
 `;
@@ -216,7 +216,7 @@ export const PodiumHeaderTitle = styled.div`
   font-size: 12px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #8a8aa0;
+  color: ${({ theme }: { theme: AppTheme }) => theme.fmut};
   margin-bottom: 22px;
 `;
 
@@ -343,8 +343,8 @@ export const RestItemRow = styled.div`
   grid-template-columns: 40px 1fr 90px 90px 40px;
   align-items: center;
   gap: 12px;
-  background: #16161f;
-  border: 1px solid #26263a;
+  background: ${({ theme }: { theme: AppTheme }) => theme.finp};
+  border: 1px solid ${({ theme }: { theme: AppTheme }) => theme.fbd};
   border-radius: 12px;
   padding: 11px 16px;
   font-family: 'Space Grotesk', sans-serif;
@@ -353,7 +353,7 @@ export const RestItemRow = styled.div`
 export const RestRank = styled.div`
   font-family: 'IBM Plex Mono', monospace;
   font-weight: 700;
-  color: #6a6a86;
+  color: ${({ theme }: { theme: AppTheme }) => theme.fmut};
 `;
 
 export const RestUser = styled.div`
@@ -368,20 +368,20 @@ export const RestAvatar = styled.div`
   height: 32px;
   border-radius: 50%;
   flex: none;
-  background: #1c1c2b;
-  border: 1px dashed #3a3a52;
+  background: ${({ theme }: { theme: AppTheme }) => theme.fbg};
+  border: 1px dashed ${({ theme }: { theme: AppTheme }) => theme.fbd};
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
   font-weight: 700;
-  color: #9a9ab5;
+  color: ${({ theme }: { theme: AppTheme }) => theme.fmut};
 `;
 
 export const RestName = styled.div`
   font-weight: 600;
   font-size: 14px;
-  color: #ececf5;
+  color: ${({ theme }: { theme: AppTheme }) => theme.ffg};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -389,14 +389,14 @@ export const RestName = styled.div`
 
 export const RestRole = styled.div`
   font-size: 11.5px;
-  color: #8a8aa0;
+  color: ${({ theme }: { theme: AppTheme }) => theme.fmut};
 `;
 
 export const RestLate = styled.div`
   text-align: right;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 13px;
-  color: #8a8aa0;
+  color: ${({ theme }: { theme: AppTheme }) => theme.fmut};
 `;
 
 export const RestPoints = styled.div`
@@ -412,9 +412,9 @@ export const QuickLateButton = styled.button`
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  border: 1px solid #33334a;
+  border: 1px solid ${({ theme }: { theme: AppTheme }) => theme.fbd};
   background: transparent;
-  color: #b6b6cc;
+  color: ${({ theme }: { theme: AppTheme }) => theme.fmut};
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -536,8 +536,8 @@ export const EmployeeAvatar = styled.div`
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: #1c1c2b;
-  border: 1px dashed #3a3a52;
+  background: ${({ theme }: { theme: AppTheme }) => theme.fbg};
+  border: 1px dashed ${({ theme }: { theme: AppTheme }) => theme.fbd};
   display: flex;
   align-items: center;
   justify-content: center;

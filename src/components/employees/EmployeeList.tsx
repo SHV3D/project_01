@@ -1,7 +1,9 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
+import { useTheme } from 'styled-components';
 import { useStore } from '../../store/StoreContext';
 import { getInitials } from '../../utils/initials';
+import { AppTheme } from '../../styles/theme';
 import {
   ActionButton,
   DangerActionButton,
@@ -16,6 +18,7 @@ import {
 export const EmployeeList: React.FC = observer(() => {
   const store = useStore();
   const members = store.members;
+  const theme = useTheme() as AppTheme;
 
   return (
     <EmployeesCard>
@@ -31,7 +34,7 @@ export const EmployeeList: React.FC = observer(() => {
                   style={{
                     fontWeight: 600,
                     fontSize: 15,
-                    color: 'var(--ffg, inherit)'
+                    color: theme.ffg
                   }}
                 >
                   {m.name}
@@ -39,7 +42,7 @@ export const EmployeeList: React.FC = observer(() => {
                 <div
                   style={{
                     fontSize: 12.5,
-                    color: 'var(--fmut, #8a8aa0)',
+                    color: theme.fmut,
                     marginTop: 2
                   }}
                 >
